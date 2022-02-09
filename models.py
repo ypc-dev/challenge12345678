@@ -1,7 +1,7 @@
 import datetime as dt
 import sqlalchemy as sql
-import sqlalchemy.orm as orm
 import database as database
+
 
 class Sensor(database.Base):
   __tablename__ = "sensors"
@@ -10,7 +10,6 @@ class Sensor(database.Base):
   country = sql.Column(sql.String)
   city = sql.Column(sql.String)
 
-  # weatherdata = orm.relationship("WeatherData", back_populates="sensors")
 
 class WeatherData(database.Base):
   __tablename__ = "weatherdata"
@@ -21,4 +20,3 @@ class WeatherData(database.Base):
   humidity = sql.Column(sql.Integer, index=True)
   wind_speed = sql.Column(sql.Integer, index=True)
   
-  # sensor = orm.relationship("Sensor", back_populates="weatherdata")

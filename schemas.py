@@ -2,6 +2,7 @@ from typing import List
 import datetime as dt
 import pydantic as pydantic
 
+
 class _SensorBase(pydantic.BaseModel):
   sensor_id: int
   country: str
@@ -13,8 +14,6 @@ class SensorCreate(_SensorBase):
 
 
 class Sensor(_SensorBase):
-  # id: int
-
   class Config:
     orm_mode = True
 
@@ -38,13 +37,12 @@ class WeatherData(_WeatherDataBase):
     orm_mode = True
 
 
-class WeatherDataRead(pydantic.BaseModel):
-  data: List[WeatherData]
+class WeatherDataMetrics(pydantic.BaseModel):
+  weatherdata: List[WeatherData]
   avg_temp: float
   avg_humidity: float
   avg_wind_speed: float
 
 
-# Update schemas
 class WeatherDataUpdate(_WeatherDataBase):
   timestamp: dt.datetime
