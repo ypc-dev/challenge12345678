@@ -1,4 +1,4 @@
-# from typing import List
+from typing import List
 import datetime as dt
 import pydantic as pydantic
 
@@ -36,3 +36,15 @@ class WeatherData(_WeatherDataBase):
 
   class Config:
     orm_mode = True
+
+
+class WeatherDataRead(pydantic.BaseModel):
+  data: List[WeatherData]
+  avg_temp: float
+  avg_humidity: float
+  avg_wind_speed: float
+
+
+# Update schemas
+class WeatherDataUpdate(_WeatherDataBase):
+  timestamp: dt.datetime
