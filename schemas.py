@@ -1,9 +1,9 @@
 from typing import List
 import datetime as dt
-import pydantic as pydantic
+from pydantic import BaseModel
 
 
-class _SensorBase(pydantic.BaseModel):
+class _SensorBase(BaseModel):
   sensor_id: int
   country: str
   city: str
@@ -18,10 +18,10 @@ class Sensor(_SensorBase):
     orm_mode = True
 
 
-class _WeatherDataBase(pydantic.BaseModel):
-  temp: int
-  humidity: int
-  wind_speed: int
+class _WeatherDataBase(BaseModel):
+  temp: float
+  humidity: float
+  wind_speed: float
 
 
 class WeatherDataCreate(_WeatherDataBase):
@@ -37,7 +37,7 @@ class WeatherData(_WeatherDataBase):
     orm_mode = True
 
 
-class WeatherDataMetrics(pydantic.BaseModel):
+class WeatherDataMetrics(BaseModel):
   weatherdata: List[WeatherData]
   avg_temp: float
   avg_humidity: float

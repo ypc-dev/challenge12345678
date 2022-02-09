@@ -1,9 +1,8 @@
 import datetime as dt
 import sqlalchemy as sql
-import database as database
+from database import Base
 
-
-class Sensor(database.Base):
+class Sensor(Base):
   __tablename__ = "sensors"
   id = sql.Column(sql.Integer, primary_key=True, index=True)
   sensor_id = sql.Column(sql.Integer, unique=True, index=True)
@@ -11,7 +10,7 @@ class Sensor(database.Base):
   city = sql.Column(sql.String)
 
 
-class WeatherData(database.Base):
+class WeatherData(Base):
   __tablename__ = "weatherdata"
   id = sql.Column(sql.Integer, primary_key=True, index=True)
   sensor_id = sql.Column(sql.Integer, sql.ForeignKey("sensors.id"))

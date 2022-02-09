@@ -1,15 +1,16 @@
 import datetime as dt
 import sqlalchemy.orm as orm
 import sqlalchemy as sql
-import models as models, schemas as schemas, database as database
+from database import engine, Base, SessionLocal
+import models as models, schemas as schemas
 
 
 def create_database():
-    return database.Base.metadata.create_all(bind=database.engine)
+    return Base.metadata.create_all(bind=engine)
 
 
 def get_db():
-    db = database.SessionLocal()
+    db = SessionLocal()
     try:
         yield db
     finally:
@@ -33,8 +34,8 @@ def get_sensor_by_sensor_id(db: orm.Session, sensor_id: int):
   return db.query(models.Sensor).filter(models.Sensor.sensor_id == sensor_id).first()
 
 
-def get_all_sensors(db: orm.Session, skip: int = 0, limit: int = 100):
-  return db.query(models.Sensor).offset(skip).limit(limit).all()
+def get_all_sensors(db: orm.Session, limit: int = 100):
+  return db.query(models.Sensor).limit(limit).all()
 
 
 ##### CRUD for 'weatherdata' Table #####
@@ -47,34 +48,34 @@ def create_weatherdata(db: orm.Session, weatherdata: schemas.WeatherDataCreate, 
   return weatherdata
 
 
-def get_all_weatherdata(db: orm.Session, day_range: int = 1, skip: int = 0, limit: int = 100):
+def get_all_weatherdata(db: orm.Session, day_range: int = 1, limit: int = 100):
   time_delta = calculate_time_delta(day_range)
-  weatherdata = db.query(models.WeatherData).filter(models.WeatherData.timestamp > time_delta).offset(skip).limit(limit).all()
+  weatherdata = db.query(models.WeatherData).filter(models.WeatherData.timestamp > time_delta).limit(limit).all()
   avg_temp = db.query(models.WeatherData).filter(models.WeatherData.timestamp > time_delta).with_entities(sql.func.avg(models.WeatherData.temp)).scalar()
   avg_humidity = db.query(models.WeatherData).filter(models.WeatherData.timestamp > time_delta).with_entities(sql.func.avg(models.WeatherData.humidity)).scalar()
   avg_wind_speed = db.query(models.WeatherData).filter(models.WeatherData.timestamp > time_delta).with_entities(sql.func.avg(models.WeatherData.wind_speed)).scalar()
 
   result = schemas.WeatherDataMetrics(
     weatherdata = weatherdata, 
-    avg_temp = round(avg_temp, 2), 
-    avg_humidity = round(avg_humidity, 2), 
-    avg_wind_speed = round(avg_wind_speed, 2)
+    avg_temp = round(avg_temp, 2) if avg_temp != None else 0, 
+    avg_humidity = round(avg_humidity, 2) if avg_humidity != None else 0, 
+    avg_wind_speed = round(avg_wind_speed, 2) if avg_humidity != None else 0
   )
   return result
 
 
-def get_weatherdata_by_sensor(db: orm.Session, sensor_id: int, day_range: int, skip: int = 0, limit: int = 100):
+def get_weatherdata_by_sensor(db: orm.Session, sensor_id: int, day_range: int, limit: int = 100):
   time_delta = calculate_time_delta(day_range)
-  weatherdata = db.query(models.WeatherData).filter(models.WeatherData.sensor_id == sensor_id).filter(models.WeatherData.timestamp > time_delta).offset(skip).limit(limit).all()
+  weatherdata = db.query(models.WeatherData).filter(models.WeatherData.sensor_id == sensor_id).filter(models.WeatherData.timestamp > time_delta).limit(limit).all()
   avg_temp = db.query(models.WeatherData).filter(models.WeatherData.sensor_id == sensor_id).filter(models.WeatherData.timestamp > time_delta).with_entities(sql.func.avg(models.WeatherData.temp)).scalar()
   avg_humidity = db.query(models.WeatherData).filter(models.WeatherData.sensor_id == sensor_id).filter(models.WeatherData.timestamp > time_delta).with_entities(sql.func.avg(models.WeatherData.humidity)).scalar()
   avg_wind_speed = db.query(models.WeatherData).filter(models.WeatherData.sensor_id == sensor_id).filter(models.WeatherData.timestamp > time_delta).with_entities(sql.func.avg(models.WeatherData.wind_speed)).scalar()
 
   result = schemas.WeatherDataMetrics(
     weatherdata = weatherdata, 
-    avg_temp = round(avg_temp, 2), 
-    avg_humidity = round(avg_humidity, 2), 
-    avg_wind_speed = round(avg_wind_speed, 2)
+    avg_temp = round(avg_temp, 2) if avg_temp != None else 0, 
+    avg_humidity = round(avg_humidity, 2) if avg_humidity != None else 0, 
+    avg_wind_speed = round(avg_wind_speed, 2) if avg_humidity != None else 0
   )
   return result
 
