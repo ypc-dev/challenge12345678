@@ -15,7 +15,7 @@
 - Check if you have the package `virtualenv` installed:
   > `pip3 list`
 - If not you can install it:
-  > `pip install virtualenv`.
+  > `pip3 install virtualenv`.
 - Clone this repository onto your computer and `cd` into the folder.
 - Now create a virtual environment inside the folder:
   > `python3 -m venv .env`
